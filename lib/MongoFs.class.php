@@ -25,20 +25,35 @@ class MongoFs
 	}
 
 
-	private function _g($file)
+	/**
+	 * Checks if file exists in temporary array
+	 * @param string $filename
+	 * @return Returns the file if exists or FALSE.
+	 */
+	private function _g($filename)
 	{
-		$file = trim($file, '/');
+		$file = trim($filename, '/');
 		return (isset($this->_tmpfile[$file])) ? $this->_tmpfile[$file] : false;
 	}
 
 
-	private function _s($file, $record)
+	/**
+	 * Stores a file into a temporary array
+	 * @param string $filename
+	 * @param object $record
+	 */
+	private function _s($filename, $record)
 	{
 		if($record->file['type'] == 'file')
-			$this->_tmpfile[trim($file, '/')] = $record;
+			$this->_tmpfile[trim($filename, '/')] = $record;
 	}
 
 
+	/**
+	 * Get a file or folder from GridFS by id
+	 * @param string $id
+	 * @return Returns a file or folder if exists or FALSE.
+	 */
 	public function get($id)
 	{
 		if(($fe = $this->_fs->findOne(array(
@@ -51,9 +66,14 @@ class MongoFs
 	}
 
 
-	public function etag($file)
+	/**
+	 * Returns the md5 Hash of a file
+	 * @param string $filename
+	 * @return Returns the md5 Hash of a file or NULL.
+	 */
+	public function etag($filename)
 	{
-		if(($fe = $this->readfile($file)) != false)
+		if(($fe = $this->readfile($filename)) != false)
 			return $fe->file['md5'];
 
 		return null;
