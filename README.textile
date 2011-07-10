@@ -1,2 +1,26 @@
 h1. Filesystem based on MongoDB GridFS
 
+Mongofilesystem will help you use MongoDB GridFS like a typical filesystem, using the familiar PHP commands.
+
+h2. Features
+* supports folder
+* temporary files for more performance
+
+h2. Implemented commands
+* etag
+* mimetype
+* filemtime
+* filesize
+* is_file
+* file_exists
+* readfile
+* file_get_contents
+* file_put_contents
+* import
+* rename
+* unlink
+* scandir
+* rmdir
+* dirname
+* mkdir
+* is_dir
