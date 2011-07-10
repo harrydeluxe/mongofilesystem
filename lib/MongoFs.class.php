@@ -79,7 +79,12 @@ class MongoFs
 	}
 
 
-	public function fileatime($file)
+	/**
+	 * Gets last access time of file
+	 * @param string $filename
+	 * @return Returns the time the file was last accessed, or FALSE on failure. The time is returned as a Unix timestamp.
+	 */
+	public function fileatime($filename)
 	{
 	}
 
@@ -107,29 +112,41 @@ class MongoFs
 
 	/**
 	 * Gets the size for the given file.
-	 * @param string $file
-	 * @return number
+	 * @param string $filename
+	 * @return Returns the size of the file in bytes or 0.
 	 */
-	public function filesize($file)
+	public function filesize($filename)
 	{
-		if(($fe = $this->readfile($file)) != false)
+		if(($fe = $this->readfile($filename)) != false)
 			return $fe->getSize();
 
 		return 0;
 	}
 
-	public function filetype($file)
+
+	/**
+	 * Gets file type
+	 * @param string $filename
+	 * @return Returns the type of the file.
+	 */
+	public function filetype($filename)
 	{
 	}
 
 
-	public function is_file($file, $returnObject = false)
+	/**
+	 * Tells whether the filename is a regular file
+	 * @param string $filename
+	 * @param booleand $returnObject If TRUE, returns the file.
+	 * @return Returns TRUE if the filename exists and is a regular file, FALSE otherwise.
+	 */
+	public function is_file($filename, $returnObject = false)
 	{
-		if(($fe = $this->_g($file)) || ($fe = $this->_fs->findOne(array(
-			'type' => 'file', 'filename' => trim($file, '/')
+		if(($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
+			'type' => 'file', 'filename' => trim($filename, '/')
 		))) != null)
 		{
-			$this->_s($file, $fe);
+			$this->_s($filename, $fe);
 			if($returnObject)
 				return $fe;
 			return true;
@@ -138,46 +155,66 @@ class MongoFs
 	}
 
 
-	public function file_exists($file)
+	/**
+	 * Checks whether a file or directory exists
+	 * @param string $filename
+	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.
+	 */
+	public function file_exists($filename)
 	{
-		if(($fe = $this->_g($file)) || ($fe = $this->_fs->findOne(array(
+		if(($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
 				'type' => array(
 					'$in' => array(
 						'folder', 'file'
 					)
 				),
-				'filename' => trim($file, '/')
+				'filename' => trim($filename, '/')
 		))) != null)
 		{
-			$this->_s($file, $fe);
+			$this->_s($filename, $fe);
 			return true;
 		}
 		return false;
 	}
 
 
-	public function basename($file)
+	/**
+	 * Returns trailing name component of path
+	 * @param string $path
+	 * @return Returns the base name of the given path.
+	 */
+	public function basename($path)
 	{
 	}
 
 
-	public function readfile($file)
+	/**
+	 * Outputs a file
+	 * @param string $filename
+	 * @return Returns the file specified by filename or FALSE on failure.
+	 */
+	public function readfile($filename)
 	{
-		if(($fe = $this->_g($file)) || ($fe = $this->_fs->findOne(array(
-			'type' => 'file', 'filename' => trim($file, '/')
+		if(($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
+			'type' => 'file', 'filename' => trim($filename, '/')
 		))) != null)
 		{
-			$this->_s($file, $fe);
+			$this->_s($filename, $fe);
 			return $fe;
 		}
 		return false;
 	}
 
 
-	public function file_get_contents($file)
+	/**
+	 * Reads entire file into a string
+	 * @param string $filename
+	 * @return The function returns the read data or FALSE on failure.
+	 */
+	public function file_get_contents($filename)
 	{
 		if(($fe = $this->_fs->findOne(array(
-			'filename' => trim($file, '/')
+			'filename' => trim($filename, '/')
 		))) != null)
 		{
 			return $fe->getBytes();
@@ -186,9 +223,16 @@ class MongoFs
 	}
 
 
-	public function file_put_contents($file, $data, $options = null)
+	/**
+	 * Write a string to GridFS
+	 * @param string $filename
+	 * @param mixed $data
+	 * @param mixed $options
+	 * @return The function returns the number of bytes that were written to the file, or FALSE on failure.
+	 */
+	public function file_put_contents($filename, $data, $options = null)
 	{
-		$file = trim($file, '/');
+		$file = trim($filename, '/');
 
 		if(gettype($data) == 'resource')
 		{
@@ -221,7 +265,7 @@ class MongoFs
 
 		$path = implode('/', array_slice($p, 0, count($p)));
 
-		// auto ordner dafuer erstellen
+		// @todo auto ordner dafuer erstellen
 		$this->mkdir($path);
 
 		$parent = count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null;
@@ -242,9 +286,16 @@ class MongoFs
 	}
 
 
-	public function import($file, $realfile, $options = null)
+	/**
+	 * Imports a file from filesystem to GridFS
+	 * @param string $filename
+	 * @param string $realfile
+	 * @param mixed $options
+	 * @return Ambiguous
+	 */
+	public function import($filename, $realfile, $options = null)
 	{
-		$file = trim($file, '/');
+		$file = trim($filename, '/');
 
 		// check if exists
 		if(($fe = $this->_fs->findOne(array(
@@ -267,7 +318,7 @@ class MongoFs
 
 		$path = implode('/', array_slice($p, 0, count($p)));
 
-		// auto ordner dafuer erstellen
+		// @todo auto ordner dafuer erstellen
 		$this->mkdir($path);
 
 		$parent = count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null;
@@ -287,12 +338,15 @@ class MongoFs
 		return $this->_fs->storeFile($realfile, $meta);
 	}
 
-
+	
 	/**
+	 * Renames a file or directory
 	 * @todo nach dem rename tmp aktualisieren oder loeschen
-	 * Enter description here ...
 	 * @param string $oldname
 	 * @param string $newname
+	 * @param boolean $overwrite
+	 * @throws Exception
+	 * @return boolean Returns TRUE on success or FALSE on failure.
 	 */
 	public function rename($oldname, $newname, $overwrite = false)
 	{
@@ -399,6 +453,7 @@ class MongoFs
 		return false;
 	}
 
+	
 	private function _strr($string, $oldname, $newname)
 	{
 		if(strpos($string, $oldname) === 0)
@@ -441,6 +496,12 @@ class MongoFs
 	}
 
 
+	/**
+	 * Copies file
+	 * @param string $source
+	 * @param string $dest
+	 * @return Returns TRUE on success or FALSE on failure.
+	 */
 	public function copy($source, $dest)
 	{
 	}
@@ -498,6 +559,10 @@ class MongoFs
 	}
 
 
+	/**
+	 * Read entry from directory handle
+	 * @param resource $dir
+	 */
 	public function readdir($dir)
 	{
 	}
@@ -562,7 +627,7 @@ class MongoFs
 	 * Attempts to create the directory specified by pathname.
 	 * @param string $path
 	 * @param boolean $recursive
-	 * @return boolean Returns TRUE on success or FALSE on failure.
+	 * @return Returns TRUE on success or FALSE on failure.
 	 */
 	public function mkdir($path, $recursive = true)
 	{
@@ -619,6 +684,12 @@ class MongoFs
 	}
 
 
+	/**
+	 * Changes file mode
+	 * @param string $filename
+	 * @param int $mode
+	 * @return Returns TRUE on success or FALSE on failure.
+	 */
 	public function chmod($filename, $mode)
 	{
 	}
