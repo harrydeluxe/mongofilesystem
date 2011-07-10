@@ -60,9 +60,14 @@ class MongoFs
 	}
 
 
-	public function mimetype($file)
+	/**
+	 * Detect MIME Content-type for a file
+	 * @param string $filename
+	 * @return string or NULL
+	 */
+	public function mimetype($filename)
 	{
-		if(($fe = $this->readfile($file)) != false)
+		if(($fe = $this->readfile($filename)) != false)
 		{
 			if(isset($fe->file['mimetype']))
 			{
