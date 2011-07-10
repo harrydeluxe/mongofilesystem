@@ -78,9 +78,15 @@ class MongoFs
 	{
 	}
 
-	public function filemtime($file)
+	
+	/**
+	 * This function returns the time when the data blocks of a file were being written to, that is, the time when the content of the file was changed.
+	 * @param string $filename
+	 * @return Returns the time the file was last modified, or NULL on failure. The time is returned as a Unix timestamp, which is suitable for the date() function.
+	 */
+	public function filemtime($filename)
 	{
-		if(($fe = $this->readfile($file)) != false)
+		if(($fe = $this->readfile($filename)) != false)
 		{
 			if(isset($fe->file['uploadDate']))
 			{
@@ -88,13 +94,17 @@ class MongoFs
 				return $date->sec;
 			}
 			return null;
-
 		}
-
+		
 		return null;
 	}
 
 
+	/**
+	 * Gets the size for the given file.
+	 * @param string $file
+	 * @return number
+	 */
 	public function filesize($file)
 	{
 		if(($fe = $this->readfile($file)) != false)
@@ -394,21 +404,26 @@ class MongoFs
 	}
 
 
-	public function delete($file)
+	/**
+	 * See unlink()
+	 * @param string $filename
+	 */	
+	public function delete($filename)
 	{
-		return $this->unlink($file);
+		return $this->unlink($filename);
 	}
 
 
 	/**
+	 * Deletes a file
 	 * @todo auch in tmp loeschen
-	 * Enter description here ...
-	 * @param string $file
+	 * @param string $filename
+	 * @return Returns TRUE on success or FALSE on failure.
 	 */
-	public function unlink($file)
+	public function unlink($filename)
 	{
 		if(($fe = $this->_fs->findOne(array(
-			'filename' => trim($file, '/')
+			'filename' => trim($filename, '/')
 		))) != null)
 		{
 			$id = $fe->file['_id'];
@@ -426,6 +441,12 @@ class MongoFs
 	}
 
 
+	/**
+	 * List files and directories inside the specified path
+	 * @param string $path
+	 * @param number $sortorder
+	 * @return Returns an array of files and directories from the directory or NULL.
+	 */
 	public function scandir($path, $sortorder = 0)
 	{
 		$path = trim($path, '/');
@@ -478,9 +499,10 @@ class MongoFs
 
 
 	/**
+	 * Removes directory
 	 * @todo auch in tmp loeschen
-	 * Enter description here ...
 	 * @param string $dir
+	 * @return Returns TRUE on success or FALSE on failure.
 	 */
 	public function rmdir($dir)
 	{
@@ -518,14 +540,25 @@ class MongoFs
 	}
 
 
-	public function dirname($dir)
+	/**
+	 * Given a string containing the path of a file or directory, this function will return the parent directory's path.
+	 * @param string $path
+	 * @return string
+	 */
+	public function dirname($path)
 	{
-		$p = explode('/', trim($dir, '/'));
+		$p = explode('/', trim($path, '/'));
 		array_pop($p);
 		return implode('/', array_slice($p, 0, count($p)));
 	}
 
 
+	/**
+	 * Attempts to create the directory specified by pathname.
+	 * @param string $path
+	 * @param boolean $recursive
+	 * @return boolean Returns TRUE on success or FALSE on failure.
+	 */
 	public function mkdir($path, $recursive = true)
 	{
 		$path = trim($path, '/');
@@ -557,6 +590,12 @@ class MongoFs
 	}
 
 
+	/**
+	 * Tells whether the given filename is a directory.
+	 * @param string $path
+	 * @param boolean $returnObject
+	 * @return boolean|Ambiguous
+	 */
 	public function is_dir($path, $returnObject = false)
 	{
 		if(trim($path) == '')
