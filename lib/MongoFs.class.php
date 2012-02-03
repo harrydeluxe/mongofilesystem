@@ -278,10 +278,10 @@ class MongoFs
 			
 			if($this->_autoversioning == false)
 			{
-				$id = $fe->file['_id'];
+				$fileid = $fe->file['_id'];
 				
 				$this->_fs->remove(array(
-					'_id' => $id
+					'_id' => $fileid
 				));				
 			}
 		}
@@ -292,8 +292,7 @@ class MongoFs
 
 		$path = implode('/', array_slice($p, 0, count($p)));
 
-		// @todo auto ordner dafuer erstellen
-		$this->mkdir($path);
+		$this->mkdir($path);	// auto create folders
 
 		$parent = count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null;
 
@@ -306,8 +305,8 @@ class MongoFs
 				'meta' => $options,
 				'filetype' => null
 		);
-		if(isset($id))
-			$meta['_id'] = $id;
+		if(isset($fileid))
+			$meta['_id'] = $fileid;
 
 		return $this->_fs->storeBytes($data, $meta);
 	}
@@ -337,10 +336,10 @@ class MongoFs
 			
 			if($this->_autoversioning == false)
 			{
-				$id = $fe->file['_id'];
+				$fileid = $fe->file['_id'];
 				
 				$this->_fs->remove(array(
-					'_id' => $id
+					'_id' => $fileid
 				));				
 			}
 		}
@@ -351,8 +350,7 @@ class MongoFs
 
 		$path = implode('/', array_slice($p, 0, count($p)));
 
-		// @todo auto ordner dafuer erstellen
-		$this->mkdir($path);
+		$this->mkdir($path);	// auto create folders
 
 		$parent = count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null;
 
@@ -365,8 +363,8 @@ class MongoFs
 				'mimetype' => GFileHelper::getMimeTypeByExtension($realfile),
 				'meta' => $options
 		);
-		if(isset($id))
-			$meta['_id'] = $id;
+		if(isset($fileid))
+			$meta['_id'] = $fileid;
 
 		return $this->_fs->storeFile($realfile, $meta);
 	}
@@ -519,15 +517,8 @@ class MongoFs
 			'filename' => trim($filename, '/')
 		))) != null)
 		{
-			/*
-			$id = $fe->file['_id'];
 			$this->_fs->remove(array(
-				'_id' => $id
-			));
-			*/
-			$filename = $fe->file['filename'];
-			$this->_fs->remove(array(
-				'filename' => $filename
+				'filename' => $fe->file['filename']
 			));
 			return true;
 		}
@@ -637,12 +628,6 @@ class MongoFs
 			{
 				foreach($cursor as $record)
 				{
-					/*
-					$id = $record->file['_id'];
-					$this->_fs->remove(array(
-						'_id' => $id
-					));
-					*/
 					$this->_fs->remove(array(
 						'filename' => $record->file['filename']
 					));
