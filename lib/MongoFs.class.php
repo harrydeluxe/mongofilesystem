@@ -16,6 +16,8 @@ class MongoFs
 
 	protected $_collectionFolders = 'folders.files';
 	protected $_collectionFs = 'folders';
+	
+	protected $_autoversioning = true;
 
 
 	public function __construct($db)
@@ -268,15 +270,20 @@ class MongoFs
 		if(($fe = $this->_fs->findOne(array(
 			'filename' => $file
 		))) != null)
-		{
-			$id = $fe->file['_id'];
+		{			
 			if(md5($data) == $fe->file['md5'])
 			{
-				return $id; // dateien sind identisch
+				return $fe->file['_id']; // Files are identical
 			}
-			$this->_fs->remove(array(
-				'_id' => $id
-			));
+			
+			if($this->_autoversioning == false)
+			{
+				$id = $fe->file['_id'];
+				
+				$this->_fs->remove(array(
+					'_id' => $id
+				));				
+			}
 		}
 
 		$p = explode('/', $file);
@@ -308,6 +315,7 @@ class MongoFs
 
 	/**
 	 * Imports a file from filesystem to GridFS
+	 * 
 	 * @param string $filename
 	 * @param string $realfile
 	 * @param mixed $options
@@ -322,14 +330,19 @@ class MongoFs
 			'filename' => $file
 		))) != null)
 		{
-			$id = $fe->file['_id'];
 			if(md5_file($realfile) == $fe->file['md5'])
 			{
-				return $id; // dateien sind identisch
+				return $fe->file['_id']; // Files are identical
 			}
-			$this->_fs->remove(array(
-				'_id' => $id
-			));
+			
+			if($this->_autoversioning == false)
+			{
+				$id = $fe->file['_id'];
+				
+				$this->_fs->remove(array(
+					'_id' => $id
+				));				
+			}
 		}
 
 		$p = explode('/', $file);
@@ -506,9 +519,15 @@ class MongoFs
 			'filename' => trim($filename, '/')
 		))) != null)
 		{
+			/*
 			$id = $fe->file['_id'];
 			$this->_fs->remove(array(
 				'_id' => $id
+			));
+			*/
+			$filename = $fe->file['filename'];
+			$this->_fs->remove(array(
+				'filename' => $filename
 			));
 			return true;
 		}
@@ -618,9 +637,14 @@ class MongoFs
 			{
 				foreach($cursor as $record)
 				{
+					/*
 					$id = $record->file['_id'];
 					$this->_fs->remove(array(
 						'_id' => $id
+					));
+					*/
+					$this->_fs->remove(array(
+						'filename' => $record->file['filename']
 					));
 				}
 				return true;
