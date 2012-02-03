@@ -5,6 +5,7 @@ Mongofilesystem will help you use MongoDB GridFS like a typical filesystem, usin
 h2. Features
 * supports folder
 * temporary files for more performance
+* auto versioning for files
 
 h2. Implemented commands
 * etag
