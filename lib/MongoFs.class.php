@@ -186,9 +186,9 @@ class MongoFs
     {
         if (($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
                 'type' => array(
-                    '$in' => array(
-                        'folder', 'file'
-                    )
+                        '$in' => array(
+                            'folder', 'file'
+                        )
                 ),
                 'filename' => trim($filename, '/')
         ))) != null)
@@ -426,9 +426,9 @@ class MongoFs
         {
             if (($cursor = $this->_db->selectCollection($this->_collectionFolders)->find(array(
                     'type' => array(
-                        '$in' => array(
-                            'folder', 'file'
-                        )
+                            '$in' => array(
+                                'folder', 'file'
+                            )
                     ),
                     '$or' => array(
                             array(
@@ -545,17 +545,17 @@ class MongoFs
      */
     public function scandir($path, $sortorder = 0)
     {
-        $path = trim($path, '/');
+        $path = (trim($path, '/') == '') ? null : trim($path, '/');
 
         $sortorder = ($sortorder === 1) ? -1 : 1;
 
         $criteria = array(
                 '$or' => array(
                         array(
-                            'parent' => trim($path, '/'), 'type' => 'folder'
+                            'parent' => $path, 'type' => 'folder'
                         ),
                         array(
-                            'path' => trim($path, '/'), 'type' => 'file'
+                            'path' => $path, 'type' => 'file'
                         )
                 )
         );
@@ -595,6 +595,14 @@ class MongoFs
      */
     public function readdir($dir)
     {
+        if (($fe = $this->_g($dir)) || ($fe = $this->_fs->findOne(array(
+            'type' => 'folder', 'filename' => trim($dir, '/')
+        ))) != null)
+        {
+            $this->_s($dir, $fe);
+            return $fe;
+        }
+        return false;
     }
 
 
@@ -612,9 +620,9 @@ class MongoFs
         {
             if (($cursor = $this->_fs->find(array(
                     'type' => array(
-                        '$in' => array(
-                            'folder', 'file'
-                        )
+                            '$in' => array(
+                                'folder', 'file'
+                            )
                     ),
                     '$or' => array(
                             array(
