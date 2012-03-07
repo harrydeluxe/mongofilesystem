@@ -34,3 +34,9 @@ h2. Implemented commands
 * dirname
 * mkdir
 * is_dir
+
+h2. Issues
+
+Have a bug? Please create an issue here on GitHub!
+
+"https://github.com/harrydeluxe/mongofilesystem/issues":https://github.com/harrydeluxe/mongofilesystem/issues
