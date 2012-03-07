@@ -7,8 +7,6 @@
  */
 class MongoFs
 {
-    const WEBSAFE = true;
-
     protected $_db;
     protected $_fs;
 
@@ -247,12 +245,14 @@ class MongoFs
 
     /**
      * Write a string to GridFS
+     * 
      * @param string $filename
      * @param mixed $data
      * @param mixed $options
+     * @param string $mimetype
      * @return The function returns the number of bytes that were written to the file, or FALSE on failure.
      */
-    public function file_put_contents($filename, $data, $options = null)
+    public function file_put_contents($filename, $data, $options = null, $mimetype = null)
     {
         $file = trim($filename, '/');
 
@@ -262,9 +262,6 @@ class MongoFs
             fclose($data);
             $data = $s;
         }
-
-        // @todo mime_type ueber extension im name rausholen				
-        // @mime_content_type($data)
 
         // check if exists
         if (($fe = $this->_fs->findOne(array(
@@ -294,17 +291,22 @@ class MongoFs
 
         $this->mkdir($path); // auto create folders
 
-        $parent = count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null;
-
+        if (!isset($mimetype) && class_exists('finfo'))
+        {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimetype = $finfo->buffer($data);
+        }       
+        
         $meta = array(
                 'name' => $name,
                 'filename' => $file,
                 'path' => $path,
-                'parent' => $parent,
+                'parent' => count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null,
                 'type' => 'file',
-                'meta' => $options,
-                'filetype' => null
+                'mimetype' => $mimetype,
+                'meta' => $options
         );
+        
         if (isset($fileid))
             $meta['_id'] = $fileid;
 

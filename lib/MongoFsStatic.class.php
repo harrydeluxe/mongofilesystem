@@ -104,7 +104,7 @@ class MongoFsStatic
     }
 
 
-    public static function file_put_contents($file, $data, $options = null)
+    public static function file_put_contents($file, $data, $options = null, $mimetype = null)
     {
         return self::getFs()->file_put_contents($file, $data, $options);
     }
