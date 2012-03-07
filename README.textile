@@ -7,6 +7,15 @@ h2. Features
 * temporary files for more performance
 * auto versioning for files
 
+h2. Basics
+
+Example snippet:
+
+<pre>
+$fs = new MongoFs(&$db);
+$fs->import($name, $file);
+</pre>
+
 h2. Implemented commands
 * etag
 * mimetype
