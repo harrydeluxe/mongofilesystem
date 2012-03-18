@@ -181,4 +181,9 @@ class MongoFsStatic
         return self::getFs()->chmod($filename, $mode);
     }
 
+    
+    public static function stats()
+    {
+        return self::getFs()->stats();
+    }
 }

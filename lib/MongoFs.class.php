@@ -799,4 +799,23 @@ class MongoFs
 
         return $mime_type;
     }
+    
+    
+    /**
+     * Checks the size of the collection
+     * 
+     * @return Returns an array with usage in bytes
+     */
+    public function stats()
+    {
+        $files = $this->_db->command(array( 'collStats' => $this->_collectionFolders ));
+        $chunks = $this->_db->command(array( 'collStats' => $this->_collectionFs.'.chunks' ));
+
+        return array(
+        	'dataSize' => $files['size'] + $chunks['size'], // just data size for collection
+        	'storageSize' => $files['storageSize'] + $chunks['storageSize'], // allocation size including unused space
+        	'indexSize' => $files['totalIndexSize'] + $chunks['totalIndexSize'], // index data size
+        	'totalSize' => $files['size'] + $chunks['size'] + $files['totalIndexSize'] + $chunks['totalIndexSize'] // data + index
+        );
+    }
 }

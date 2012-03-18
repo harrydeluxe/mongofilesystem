@@ -1,6 +1,5 @@
 <?php
 
-//class MongoFile extends Sabre_DAV_File
 class MongoFile extends MongoNode implements Sabre_DAV_IFile
 {
 

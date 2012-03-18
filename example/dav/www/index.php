@@ -4,7 +4,7 @@ define('PROTECTED_PATH', dirname(__FILE__) . '/../protected/');
 
 // settings
 date_default_timezone_set('Germany/Berlin');
-$baseUri = '/delacap/web/labs/mongofilesystem/example/dav/www/';
+$baseUri = '/delacap/web/labs/mongofilesystem/example/dav/www/'; // must set to your root
 $publicDir = 'public';
 $tmpDir = PROTECTED_PATH . 'tmp/'; // must be read- and writeable
 

@@ -1,6 +1,6 @@
 <?php
 
-//abstract class MongoNode implements Sabre_DAV_INode
+
 abstract class MongoNode
 {
     /**
@@ -55,7 +55,6 @@ abstract class MongoNode
     public function getLastModified()
     {
         return null;
-        //return 1296187451;
         return M::filemtime($this->path);
     }
 }

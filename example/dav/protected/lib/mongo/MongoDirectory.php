@@ -68,8 +68,17 @@ class MongoDirectory extends MongoNode implements Sabre_DAV_ICollection, Sabre_D
      */
     public function getQuotaInfo()
     {
+        $stats = M::stats();
+        
         return array(
-            100000000, 200000000
+            10000000000-$stats['totalSize'], // used space
+            10000000000  // total space (fake data)
         );
+        /*
+        return array(
+            disk_total_space($this->path)-disk_free_space($this->path),
+            disk_free_space($this->path)
+            );
+        */
     }
 }
