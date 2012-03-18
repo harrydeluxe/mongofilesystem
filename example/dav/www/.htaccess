@@ -1,0 +1,38 @@
+AddDefaultCharset UTF-8
+
+<IfModule mod_deflate.c>
+        SetOutputFilter DEFLATE
+        BrowserMatch ^Mozilla/4 gzip-only-text/html
+        BrowserMatch ^Mozilla/4\.0[678] no-gzip
+        BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+		
+	RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+	#RewriteRule ^.*$ /delacap/web/labs/mongofilesystem/example/dav/www/index.php [NC,L]
+	RewriteRule ^.*$ index.php [NC,L]
+	
+    RewriteCond %{REQUEST_METHOD} ^PUT$
+    RewriteRule .DS_Store - [F]
+    RewriteRule .Trashes - [F]
+    RewriteRule .TemporaryItems - [F]
+    # RewriteRule ._.* - [F]
+
+    # Fix broken Windows XP
+    RedirectMatch 404 ^/(MSOffice/|_vti_bin/|_vti_inf.html$)
+
+    BrowserMatch "^WebDAVFS/1.[012]" redirect-carefully
+    BrowserMatch "Microsoft Data Access Internet Publishing Provider" redirect-carefully
+    BrowserMatch "Microsoft-WebDAV-MiniRedir/5.1.2600" redirect-carefully
+    BrowserMatch "Microsoft-WebDAV-MiniRedir/^" redirect-carefully
+    BrowserMatch "^WebDrive" redirect-carefully
+    BrowserMatch "^WebDAVFS" redirect-carefully
+    BrowserMatch "^gnome-vfs" redirect-carefully
+    BrowserMatch "^SVN" redirect-carefully
+    BrowserMatch "SVN/^" redirect-carefully
+
+</IfModule>
