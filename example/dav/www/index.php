@@ -1,7 +1,6 @@
 <?php
 
 define('PROTECTED_PATH', dirname(__FILE__) . '/../protected/');
-//set_include_path(PROTECTED_PATH . 'lib/' . PATH_SEPARATOR . get_include_path()); 
 
 // settings
 date_default_timezone_set('Germany/Berlin');
@@ -12,9 +11,8 @@ $tmpDir = PROTECTED_PATH . 'tmp/'; // must be read- and writeable
 // Files we need
 require_once('../../../lib/MongoFs.class.php');
 require_once('../../../lib/MongoFsStatic.class.php');
-//require_once('Sabre/autoload.php');
+
 require_once(PROTECTED_PATH . 'lib/Sabre/autoload.php');
-//require_once(PROTECTED_PATH . 'lib/Sabre.includes.php');
 require_once(PROTECTED_PATH . 'lib/mongo/MongoNode.php');
 require_once(PROTECTED_PATH . 'lib/mongo/MongoDirectory.php');
 require_once(PROTECTED_PATH . 'lib/mongo/MongoFile.php');
