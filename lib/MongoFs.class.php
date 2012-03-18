@@ -2,9 +2,10 @@
 /**
  * MongoFs
  *
- * @copyright Copyright (c) 2011 Harald Hanek
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @copyright Copyright (c) 2011-2012 Harald Hanek
+ * @license http://harrydeluxe.mit-license.org
  */
+
 class MongoFs
 {
     protected $_db;
@@ -15,7 +16,7 @@ class MongoFs
     protected $_collectionFolders = 'folders.files';
     protected $_collectionFs = 'folders';
 
-    protected $_autoversioning = true;
+    protected $_autoversioning = false;
 
 
     public function __construct($db)
@@ -118,9 +119,9 @@ class MongoFs
     {
         if (($fe = $this->readfile($filename)) != false)
         {
-            if (isset($fe->file['uploadDate']))
+            if (isset($fe->file['filemtime']))
             {
-                $date = $fe->file['uploadDate'];
+                $date = $fe->file['filemtime'];
                 return $date->sec;
             }
             return null;
@@ -300,6 +301,7 @@ class MongoFs
         $meta = array(
                 'name' => $name,
                 'filename' => $file,
+                'filemtime' => new MongoDate(),
                 'path' => $path,
                 'parent' => count($p) > 1 ? implode('/', array_slice($p, 0, count($p) - 1)) : null,
                 'type' => 'file',
@@ -359,6 +361,7 @@ class MongoFs
         $meta = array(
                 'name' => $name,
                 'filename' => $file,
+                'filemtime' => new MongoDate(filemtime($realfile)),
                 'path' => $path,
                 'parent' => $parent,
                 'type' => 'file',
@@ -368,7 +371,7 @@ class MongoFs
         if (isset($fileid))
             $meta['_id'] = $fileid;
 
-        return $this->_fs->storeFile($realfile, $meta);
+        return $this->_fs->storeFile($realfile, $meta, array( 'safe' => true ));
     }
 
 
