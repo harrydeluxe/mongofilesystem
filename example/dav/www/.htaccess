@@ -1,26 +1,29 @@
 AddDefaultCharset UTF-8
 
+<IfModule mod_php5.c>	
+    php_value upload_max_filesize 512M
+    php_value post_max_size 512M
+    php_value memory_limit 512M
+</IfModule>
+
 <IfModule mod_deflate.c>
-        SetOutputFilter DEFLATE
-        BrowserMatch ^Mozilla/4 gzip-only-text/html
-        BrowserMatch ^Mozilla/4\.0[678] no-gzip
-        BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    SetOutputFilter DEFLATE
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
 </IfModule>
 
 <IfModule mod_rewrite.c>
-	RewriteEngine on
-		
-	RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteEngine on
+    	
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-
-	#RewriteRule ^.*$ /delacap/web/labs/mongofilesystem/example/dav/www/index.php [NC,L]
-	RewriteRule ^.*$ index.php [NC,L]
+    RewriteRule ^.*$ index.php [NC,L]
 	
     RewriteCond %{REQUEST_METHOD} ^PUT$
     RewriteRule .DS_Store - [F]
     RewriteRule .Trashes - [F]
     RewriteRule .TemporaryItems - [F]
-    # RewriteRule ._.* - [F]
 
     # Fix broken Windows XP
     RedirectMatch 404 ^/(MSOffice/|_vti_bin/|_vti_inf.html$)
