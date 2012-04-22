@@ -140,6 +140,12 @@ class MongoFsStatic
     }
 
 
+    public static function copydir($source, $dest)
+    {
+        return self::getFs()->copydir($source, $dest);
+    }
+    
+    
     public static function scandir($path, $sortorder = 0)
     {
         return self::getFs()->scandir($path, $sortorder);
