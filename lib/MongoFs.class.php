@@ -58,7 +58,7 @@ class MongoFs
     public function get($id)
     {
         if (($fe = $this->_fs->findOne(array(
-            '_id' => new MongoId($id)
+                '_id' => new MongoId($id)
         ))) != null)
         {
             return $fe;
@@ -164,7 +164,7 @@ class MongoFs
     public function is_file($filename, $returnObject = false)
     {
         if (($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
-            'type' => 'file', 'filename' => trim($filename, '/')
+                'type' => 'file', 'filename' => trim($filename, '/')
         ))) != null)
         {
             $this->_s($filename, $fe);
@@ -186,7 +186,7 @@ class MongoFs
         if (($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
                 'type' => array(
                         '$in' => array(
-                            'folder', 'file'
+                                'folder', 'file'
                         )
                 ),
                 'filename' => trim($filename, '/')
@@ -217,7 +217,7 @@ class MongoFs
     public function readfile($filename)
     {
         if (($fe = $this->_g($filename)) || ($fe = $this->_fs->findOne(array(
-            'type' => 'file', 'filename' => trim($filename, '/')
+                'type' => 'file', 'filename' => trim($filename, '/')
         ))) != null)
         {
             $this->_s($filename, $fe);
@@ -235,7 +235,7 @@ class MongoFs
     public function file_get_contents($filename)
     {
         if (($fe = $this->_fs->findOne(array(
-            'filename' => trim($filename, '/')
+                'filename' => trim($filename, '/')
         ))) != null)
         {
             return $fe->getBytes();
@@ -246,7 +246,7 @@ class MongoFs
 
     /**
      * Write a string to GridFS
-     * 
+     *
      * @param string $filename
      * @param mixed $data
      * @param mixed $options
@@ -266,7 +266,7 @@ class MongoFs
 
         // check if exists
         if (($fe = $this->_fs->findOne(array(
-            'filename' => $file
+                'filename' => $file
         ))) != null)
         {
             if (md5($data) == $fe->file['md5'])
@@ -279,7 +279,7 @@ class MongoFs
                 $fileid = $fe->file['_id'];
 
                 $this->_fs->remove(array(
-                    '_id' => $fileid
+                        '_id' => $fileid
                 ));
             }
         }
@@ -296,8 +296,8 @@ class MongoFs
         {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimetype = $finfo->buffer($data);
-        }       
-        
+        }
+
         $meta = array(
                 'name' => $name,
                 'filename' => $file,
@@ -308,7 +308,7 @@ class MongoFs
                 'mimetype' => $mimetype,
                 'meta' => $options
         );
-        
+
         if (isset($fileid))
             $meta['_id'] = $fileid;
 
@@ -318,7 +318,7 @@ class MongoFs
 
     /**
      * Imports a file from filesystem to GridFS
-     * 
+     *
      * @param string $filename
      * @param string $realfile
      * @param mixed $options
@@ -330,7 +330,7 @@ class MongoFs
 
         // check if exists
         if (($fe = $this->_fs->findOne(array(
-            'filename' => $file
+                'filename' => $file
         ))) != null)
         {
             if (md5_file($realfile) == $fe->file['md5'])
@@ -343,7 +343,7 @@ class MongoFs
                 $fileid = $fe->file['_id'];
 
                 $this->_fs->remove(array(
-                    '_id' => $fileid
+                        '_id' => $fileid
                 ));
             }
         }
@@ -404,7 +404,7 @@ class MongoFs
         if ($this->is_file($oldname))
         {
             if (($fe = $this->_db->selectCollection($this->_collectionFolders)->findOne(array(
-                'type' => 'file', 'filename' => $oldname
+                    'type' => 'file', 'filename' => $oldname
             ))) != null)
             {
                 $npath = $this->dirname($newname);
@@ -419,9 +419,9 @@ class MongoFs
                 );
 
                 $this->_db->selectCollection($this->_collectionFolders)->update(array(
-                    '_id' => $fe['_id']
+                        '_id' => $fe['_id']
                 ), $meta, array(
-                    "safe" => true
+                        "safe" => true
                 ));
                 return true;
             }
@@ -432,7 +432,7 @@ class MongoFs
             if (($cursor = $this->_db->selectCollection($this->_collectionFolders)->find(array(
                     'type' => array(
                             '$in' => array(
-                                'folder', 'file'
+                                    'folder', 'file'
                             )
                     ),
                     '$or' => array(
@@ -459,9 +459,9 @@ class MongoFs
                         );
 
                         $this->_db->selectCollection($this->_collectionFolders)->update(array(
-                            '_id' => $record['_id']
+                                '_id' => $record['_id']
                         ), $meta, array(
-                            "safe" => true
+                                "safe" => true
                         ));
                     }
                     else
@@ -475,9 +475,9 @@ class MongoFs
                         );
 
                         $this->_db->selectCollection($this->_collectionFolders)->update(array(
-                            '_id' => $record['_id']
+                                '_id' => $record['_id']
                         ), $meta, array(
-                            "safe" => true
+                                "safe" => true
                         ));
                     }
                 }
@@ -503,7 +503,7 @@ class MongoFs
     /**
      * See unlink()
      * @param string $filename
-     */ 
+     */
     public function delete($filename)
     {
         return $this->unlink($filename);
@@ -519,11 +519,11 @@ class MongoFs
     public function unlink($filename)
     {
         if (($fe = $this->_fs->findOne(array(
-            'filename' => trim($filename, '/')
+                'filename' => trim($filename, '/')
         ))) != null)
         {
             $this->_fs->remove(array(
-                'filename' => $fe->file['filename']
+                    'filename' => $fe->file['filename']
             ));
             return true;
         }
@@ -539,6 +539,47 @@ class MongoFs
      */
     public function copy($source, $dest)
     {
+        if(($s = $this->is_file($source, true)) == false)
+            return false;
+
+        if($this->is_file($dest))
+            $this->unlink($dest);
+
+        // @todo include metadata
+        return $this->file_put_contents($dest, $s->getBytes());
+    }
+
+
+    /**
+     * Copies a directory recursive
+     * @param string $source
+     * @param string $dest
+     * @return Returns TRUE on success or FALSE on failure.
+     */
+    public function copydir($source, $dest)
+    {
+        $source = trim($source, '/');
+        $dest = trim($dest, '/');
+        if ($this->is_dir($source))
+        {
+            $this->mkdir($dest);
+            $files = $this->scandir($source);
+
+            foreach ($files as $file)
+            {
+                if($file != '.' && $file != '..')
+                    $this->copydir($source.'/'.$file, $dest.'/'.$file);
+            }
+            return true;
+        }
+        elseif ($this->is_file($source))
+        {
+            return $this->copy($source, $dest);
+        }
+        else
+        {
+            return false;
+        }
     }
 
 
@@ -557,17 +598,17 @@ class MongoFs
         $criteria = array(
                 '$or' => array(
                         array(
-                            'parent' => $path, 'type' => 'folder'
+                                'parent' => $path, 'type' => 'folder'
                         ),
                         array(
-                            'path' => $path, 'type' => 'file'
+                                'path' => $path, 'type' => 'file'
                         )
                 )
         );
 
 
         $sort = array(
-            'type' => -1, 'name' => $sortorder
+                'type' => -1, 'name' => $sortorder
         );
 
 
@@ -601,7 +642,7 @@ class MongoFs
     public function readdir($dir)
     {
         if (($fe = $this->_g($dir)) || ($fe = $this->_fs->findOne(array(
-            'type' => 'folder', 'filename' => trim($dir, '/')
+                'type' => 'folder', 'filename' => trim($dir, '/')
         ))) != null)
         {
             $this->_s($dir, $fe);
@@ -626,15 +667,15 @@ class MongoFs
             if (($cursor = $this->_fs->find(array(
                     'type' => array(
                             '$in' => array(
-                                'folder', 'file'
+                                    'folder', 'file'
                             )
                     ),
                     '$or' => array(
                             array(
-                                'parent' => new MongoRegex("/^" . $dir . "/i")
+                                    'parent' => new MongoRegex("/^" . $dir . "/i")
                             ),
                             array(
-                                'path' => new MongoRegex("/^" . $dir . "/i")
+                                    'path' => new MongoRegex("/^" . $dir . "/i")
                             )
                     )
             ))) != null)
@@ -642,7 +683,7 @@ class MongoFs
                 foreach($cursor as $record)
                 {
                     $this->_fs->remove(array(
-                        'filename' => $record->file['filename']
+                            'filename' => $record->file['filename']
                     ));
                 }
                 return true;
@@ -697,7 +738,7 @@ class MongoFs
         );
 
         return $this->_db->selectCollection($this->_collectionFolders)->insert($meta, array(
-            "safe" => true
+                "safe" => true
         ));
     }
 
@@ -714,7 +755,7 @@ class MongoFs
             return true;
 
         if (($fe = $this->_db->selectCollection($this->_collectionFolders)->findOne(array(
-            'type' => 'folder', 'filename' => trim($path, '/')
+                'type' => 'folder', 'filename' => trim($path, '/')
         ))) != null)
         {
 
@@ -799,11 +840,11 @@ class MongoFs
 
         return $mime_type;
     }
-    
-    
+
+
     /**
      * Checks the size of the collection
-     * 
+     *
      * @return Returns an array with usage in bytes
      */
     public function stats()
@@ -812,10 +853,10 @@ class MongoFs
         $chunks = $this->_db->command(array( 'collStats' => $this->_collectionFs.'.chunks' ));
 
         return array(
-        	'dataSize' => $files['size'] + $chunks['size'], // just data size for collection
-        	'storageSize' => $files['storageSize'] + $chunks['storageSize'], // allocation size including unused space
-        	'indexSize' => $files['totalIndexSize'] + $chunks['totalIndexSize'], // index data size
-        	'totalSize' => $files['size'] + $chunks['size'] + $files['totalIndexSize'] + $chunks['totalIndexSize'] // data + index
+            'dataSize' => $files['size'] + $chunks['size'], // just data size for collection
+            'storageSize' => $files['storageSize'] + $chunks['storageSize'], // allocation size including unused space
+            'indexSize' => $files['totalIndexSize'] + $chunks['totalIndexSize'], // index data size
+            'totalSize' => $files['size'] + $chunks['size'] + $files['totalIndexSize'] + $chunks['totalIndexSize'] // data + index
         );
     }
 }
